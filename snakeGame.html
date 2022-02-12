@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+
+        .main-game-box{
+            display: flex;
+            width: 900px;
+            margin: auto;
+            border: 1px solid #607d8b21;
+            padding: -1px;
+            height: 604px;
+        }
+        
+    
+        .game-box2{
+            width: 196px;
+            padding: 10px 5px;
+            height: 602px;
+            border: 1px solid #06212e;
+        }
+
+        .user-display{
+            height: 80px;
+            background-color: aliceblue;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+
+        .full-btn-container{
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #8a899347;
+        }
+        
+        .btn-full{
+            background-color: #E7EEEC;
+            align-self: center;
+            width: 130px;
+            font-size: 11pt;
+            height: 33px;
+            margin: 6px 2px;
+            text-align: center;
+            padding: 4px 10px;
+            box-shadow: rgb(232 233 233) 0px -1px 0px 0px inset;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .btn-full:hover{
+            background: #3D4F58;
+            color: white;
+            cursor: pointer;
+        }
+
+        .short-btn-container{
+            border-bottom: 1px solid #8a899347;
+            padding: 3px 0px;
+            
+        }
+
+        .short-btn-container h3{
+            display: inline-block;
+            text-align: center;
+        }
+
+        .short-btn-container h4{
+            text-align: center;
+        }
+        
+        .short-btn-container-main{
+            text-align: center;
+        }
+
+        .btn-short{
+            background-color: #E7EEEC;
+            align-self: center;
+            width: 40px;
+            font-size: 11pt;
+            height: 33px;
+            margin: 6px 2px;
+            text-align: center;
+            padding: 4px 10px;
+            box-shadow: rgb(232 233 233) 0px -1px 0px 0px inset;
+            border: none;
+            border-radius: 3px;
+        }
+        
+        .btn-short:hover{
+            background: #3D4F58;
+            color: white;
+            cursor: pointer;
+        }
+
+
+        .score-box{
+            text-align: center;
+            border-bottom: 1px solid #8a899347;
+            padding: 3px 0px;
+        }
+
+        .eaten-food-box{
+            text-align: center;
+            border-bottom: 1px solid #8a899347;
+            padding: 3px 0px;
+        }
+
+
+        .game-box3{
+            display: none;
+        }
+
+        /* Mobile View */
+        @media (max-width:450px) {
+            .game-box3{
+                /* background-color: #06212ec2; */
+                width: 900px;
+                display: flex;
+                margin:100px 0px;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-full-mobile{
+                background-color: #E7EEEC;
+                align-self: center;
+                width: 200px;
+                font-size: 11pt;
+                height: 200px;
+                margin: 6px 2px;
+                text-align: center;
+                padding: 4px 10px;
+                box-shadow: rgb(232 233 233) 0px -1px 0px 0px inset;
+                border: none;
+                border-radius: 3px;
+            }
+        }
+
+        .hide-me{
+            color: #E7EEEC;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="main-game-box">
+        <!-- Game Play Ground -->
+        <div class="game-box1">
+            <canvas id="canvas"></canvas>
+        </div>
+        <!-- Game Summary -->
+        <div class="game-box2">
+
+            <div class="user-display">
+                <h4 id="user-display-screen"></h4>
+            </div>
+
+            <div class="full-btn-container">
+                 <button onclick="startButton()" class="btn-full">Start</button> 
+                 <button onclick="pauseButtonOnClickEvent()" id="pauseButtonId" class="btn-full"></button> 
+                 <button onclick="restartGame()" class="btn-full">Reset</button>
+            </div>
+
+
+            <div class="short-btn-container">
+                <h4>Speed</h4>
+                <div class="short-btn-container-main">
+                    <button id="btnSpeedDecrementId" onclick="btnSpeedDecrementOnClickEvent()"
+                    class="btn-short">---</button>
+                    <h3 id="speedDisplayId"></h3>
+                    <button id="btnSpeedIncrementId" onclick="btnSpeedIncrementOnClickEvent()"
+                    class="btn-short">+++</button>
+                </div>
+            </div>
+            <div class="short-btn-container">
+                <h4>Size</h4>
+                <div class="short-btn-container-main">
+                    <button onclick="btnBoxDecrementOnClickEvent()" class="btn-short">---</button>
+                    <h3 id="boxDisplayId"> </h3>
+                    <button onclick="btnBoxIncrementOnClickEvent()" class="btn-short">+++</button>
+                </div>
+            </div>
+            <div class="short-btn-container">
+                <h4>Length</h4>
+                <div class="short-btn-container-main">
+                    <button onclick="initialSnakeLengthDecrementOnClickEvent()" class="btn-short">---</button>
+                    <h3 id="initialSnakeSizeDisplayId"> </h3>
+                    <button onclick="initialSnakeLengthIncrementOnClickEvent()" class="btn-short">+++</button>
+                </div>
+            </div>
+
+            <div class="score-box">
+                <h3>Score</h3>
+                <h3 id="score-id"></h3>
+            </div>
+            <div class="score-box">
+                <h3>High Score</h3>
+                <h3 id="high-score-id"></h3>
+            </div>
+            <div class="eaten-food-box">
+                <h3>Quantity</h3>
+                <h3 id="eaten-food-id"></h3>
+            </div>
+        </div>
+    </div>
+     <!--   Game Button For Mobile Device -->
+         <div class="game-box3">
+            <div>
+                <button onclick="mobileTRBLBtnOnclickEvent(38)" class="btn-full-mobile">Up</button>
+            </div>
+            <div>
+                <button onclick="mobileTRBLBtnOnclickEvent(37)" class="btn-full-mobile">Left</button>
+                <button class="btn-full-mobile hide-me">Dummy</button>
+                <button onclick="mobileTRBLBtnOnclickEvent(39)" class="btn-full-mobile">Right</button>
+            </div>
+            <div>
+                <button onclick="mobileTRBLBtnOnclickEvent(40)" class="btn-full-mobile">Down</button>
+            </div>
+        </div>
+</body>
+<script>
+
+    const canvas = document.querySelector('#canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = 700;
+    canvas.height = 600;
+
+    const pauseButton = document.getElementById('pauseButtonId');
+    pauseButton.innerText = 'Pause';
+
+    const userDisplayScreen = document.getElementById('user-display-screen');
+    userDisplayScreen.innerText = 'Hey there,\nWhy Are You Waiting \n Start The Game';
+
+    const scoreId = document.getElementById('score-id');
+    const highScoreId = document.getElementById('high-score-id');
+    let score = 0;
+    let highScore = 0;
+    let previousScore = 0;
+    let highScoreMade = false;
+
+    // Initial Snake Length by default is 4
+    const initialSnakeLengthValue = [2, 4, 8, 10, 15, 20, 25, 30]
+    let initialSnakeSizePointer = 1;
+    let initialSnakeSize = initialSnakeLengthValue[initialSnakeSizePointer];
+    const initialSnakeSizeDisplayId = document.getElementById('initialSnakeSizeDisplayId');
+    initialSnakeSizeDisplayId.innerText = `${initialSnakeSize}`;
+
+   
+
+    let snakeStartedToRun = false;
+    let pauseRightNow = false;
+    let isOverRightNow = false;
+
+    scoreId.innerText = `${score}`;
+    highScoreId.innerText = `${highScore}`;
+
+    // Snake Speed Increment and Decrement Array
+
+    const snakeSpeedValues = [
+        { userValue: 10, speedValue: 1000 },
+        { userValue: 20, speedValue: 500 },
+        { userValue: 30, speedValue: 200 },
+        { userValue: 40, speedValue: 100 },
+        { userValue: 50, speedValue: 80 },
+        { userValue: 60, speedValue: 60 },
+        { userValue: 70, speedValue: 40 },
+        { userValue: 80, speedValue: 30 },
+        { userValue: 90, speedValue: 25 },
+        { userValue: 100, speedValue: 20 },
+    ]
+    // pointing to index 4 of snakeSpeedValues Array
+    let snakeSpeedPointer = 4;
+    // Setting By default Snake Speed 
+    let snakeSpeed = snakeSpeedValues[snakeSpeedPointer].speedValue;
+    // Setting default snake speed's value in browser
+    const speedDisplayId = document.getElementById('speedDisplayId');
+    speedDisplayId.innerText = `${snakeSpeedValues[snakeSpeedPointer].userValue}`;
+
+    // Per or One Rectangle size width=box and height=box
+    const boxValue = [1, 2, 4, 5, 10, 20]; // Common Factors for Appropriate Mathing
+    let activeBox = 5; // lower boundry=0 and upper boundry=boxValue.length (5)
+    let box = boxValue[activeBox];
+    const boxDisplayId = document.getElementById('boxDisplayId');
+    boxDisplayId.innerText = `${box}`;
+
+    let lowerBound = 0;
+    let upperBoundX = canvas.width / box;
+    let upperBoundY = canvas.height / box;
+
+
+   const eatenFoodId=document.getElementById('eaten-food-id');
+   eatenFoodId.innerText=0;
+
+
+    // Function that makes single Rectangle or Single Block 
+    const drawRect = (x, y, color) => {
+        ctx.fillStyle = color;
+        ctx.fillRect(x * box, y * box, box, box);
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(x * box, y * box, box, box);
+    }
+
+    const initialSnakeDrawing = () => {
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        snakeArray = [];
+        for (i = 0; i < initialSnakeSize; i++) {
+            // inserting first
+            snakeArray.unshift({
+                x: i, y: 0
+            })
+        }
+
+        // Drawing Snake's First Four Block or Rectangle
+        snakeArray.forEach((value) => {
+            drawRect(value.x, value.y, snakeColor);
+        })
+        drawRect(food.x, food.y, foodColor);
+    }
+
+    const InitializingStartingPointOfGame = () => {
+
+        snakeArray = []
+        score = 0;
+        highScoreMade = false;
+        snakeDirection = 'right'; snakeColor = 'red'; foodColor = 'green';
+        isOverRightNow = false;
+        snakeStartedToRun = false;
+        pauseRightNow = false;
+        food = { x: 5, y: 3 }
+
+        initialSnakeSizePointer = 1;
+        initialSnakeSize = initialSnakeLengthValue[initialSnakeSizePointer];
+        initialSnakeSizeDisplayId.innerText = `${initialSnakeSize}`;
+
+        scoreId.innerText = `${score}`;
+        eatenFoodId.innerText=score/10;
+
+        activeBox = 5;
+        box = boxValue[activeBox];
+        boxDisplayId.innerText = `${box}`;
+
+
+        lowerBound = 0;
+        upperBoundX = canvas.width / box;
+        upperBoundY = canvas.height / box;
+
+        snakeSpeedPointer = 4;
+        // Setting By default Snake Speed 
+        snakeSpeed = snakeSpeedValues[snakeSpeedPointer].speedValue;
+        // Setting default snake speed's value in browser
+        speedDisplayId.innerText = `${snakeSpeedValues[snakeSpeedPointer].userValue}`;
+
+        userDisplayScreen.innerText = "Hey there,\nWhy Are You Waiting \n Start The Game";
+
+        initialSnakeDrawing();
+
+    }
+
+
+    // Main Snake Array
+    let snakeArray = [];
+    // by default snake will go straight 
+    let snakeDirection = 'right';
+
+    // Snake color
+    let snakeColor = 'red';
+    // Food color
+    let foodColor = 'green';
+
+    // Initializing food's coordinates by default
+    let food = {
+        x: 5,
+        y: 3
+    };
+    initialSnakeDrawing();
+
+    const getNewHead = (X, Y) => {
+        // Accessing Snake Direction
+        if (snakeDirection === 'right') {
+            X++;
+        } else if (snakeDirection === 'left') {
+            X--;
+        } else if (snakeDirection === 'top') {
+            Y--;
+        } else {
+            Y++;
+        }
+        return {
+            x: X,
+            y: Y
+        }
+    }
+
+    // If snake touch at the corner or border then return true
+    const getGameOverStatus = (headX, headY) => {
+        if ((headX < 0 || headX > upperBoundX - 1) || (headY < 0 || headY > upperBoundY - 1)) return true;
+        return false;
+    }
+
+    const getFoodCoordinates = () => {
+        return {
+            x: Math.floor(Math.random() * upperBoundX),
+            y: Math.floor(Math.random() * upperBoundY)
+        }
+    }
+
+    const getFood = () => {
+        let tempFood = getFoodCoordinates();
+        while (snakeArray.filter(({ x, y }) => {
+            return (x === tempFood.x && y === tempFood.y)
+        }).length !== 0) {
+            tempFood = getFoodCoordinates();
+        }
+        return tempFood;
+    }
+
+    const isEatenFood = () => {
+        if (snakeArray[0].x === food.x && snakeArray[0].y === food.y)
+            return true;
+        return false;
+    }
+
+
+    const hasSnakeTouchedItself = (snakeHead) => {
+        if (snakeArray.filter(({ x, y }) => (x === snakeHead.x && y === snakeHead.y)).length === 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    const gameLoop = () => {
+
+        // Active Head's coordinates of snake
+        let X = snakeArray[0].x;
+        let Y = snakeArray[0].y;
+
+        // Storing New Head in snakeHead object
+        let snakeHead = getNewHead(X, Y);
+
+        isOverRightNow = getGameOverStatus(snakeHead.x, snakeHead.y);
+
+        if (hasSnakeTouchedItself(snakeHead)) {
+            isOverRightNow = true;
+        }
+
+        // Inserting New Head in snake
+        snakeArray.unshift(snakeHead);
+
+        if (!isOverRightNow) {
+
+            // Removing last array element in each iteration
+            if (!isEatenFood()) {
+                snakeArray.pop()
+            } else {
+                // After eating creating new Food
+                food = getFood();
+                // incrementing  score
+                score += 10;
+            }
+        } else {
+            // IF GAME OVER IS TRUE
+            previousScore = score;
+            if (score > highScore) {
+                highScore = score;
+                score = 0;
+                highScoreMade = true;
+            }
+        }
+
+        // Clearing Old Snake Body
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Drawing New Snake Body
+        snakeArray.forEach((value) => {
+            drawRect(value.x, value.y, snakeColor);
+        })
+
+        // Drawing Food 
+        drawRect(food.x, food.y, foodColor);
+
+    }
+
+    document.addEventListener('keydown', (e) => {
+        switch (e.keyCode) {
+            case 37:
+                if (!(snakeDirection === 'right'))
+                    snakeDirection = 'left'; break;
+            case 38:
+                if (!(snakeDirection === 'bottom'))
+                    snakeDirection = 'top'; break;
+            case 39:
+                if (!(snakeDirection === 'left'))
+                    snakeDirection = 'right'; break;
+            case 40:
+                if (!(snakeDirection === 'top'))
+                    snakeDirection = 'bottom'; break;
+            default: break;
+        }
+    })
+
+
+    const snakeIntervalLoop = () => {
+        ((!(pauseRightNow)) && (snakeStartedToRun)) ? gameLoop() : '';
+
+        highScoreMade ? scoreId.innerText = `${previousScore}` : scoreId.innerText = `${score}`
+        highScoreId.innerText = `${highScore}`;
+
+        highScoreMade ? eatenFoodId.innerText=previousScore/10 : eatenFoodId.innerText=score/10;
+        
+
+        if ((isOverRightNow)) {
+            snakeStartedToRun = false;
+            if (highScoreMade) {
+                userDisplayScreen.innerText = `Game Over\n Congratulation...\nYou Made High Score ${previousScore} \Reset The Game`;
+            } else {
+                userDisplayScreen.innerText = `Game Over\n Your Score ${previousScore} \nReset The Game`;
+            }
+        }
+
+        if ((!(isOverRightNow)) && (snakeStartedToRun))
+            userDisplayScreen.innerText = 'Enjoy The Game';
+        if ((!(isOverRightNow)) && (pauseRightNow))
+            userDisplayScreen.innerText = 'Paused';
+
+    }
+
+    let snakeInterval = setInterval(snakeIntervalLoop, snakeSpeed)
+    clearInterval(snakeInterval);
+
+    const restartGame = () => {
+        if (pauseRightNow) return;
+        clearInterval(snakeInterval);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        InitializingStartingPointOfGame();
+    }
+
+
+    const startButton = () => {
+        isOverRightNow ? snakeStartedToRun = false : snakeStartedToRun = true;
+        clearInterval(snakeInterval);
+        snakeInterval = setInterval(snakeIntervalLoop, snakeSpeed)
+    }
+
+    const pauseButtonOnClickEvent = () => {
+
+        if (snakeStartedToRun) {
+            if ((!(pauseRightNow))) {
+                pauseRightNow = true;
+                pauseButton.innerText = "Resume";
+            }
+            else if ((pauseRightNow)) {
+                pauseRightNow = false;
+                pauseButton.innerText = "Pause";
+            }
+        }
+
+    }
+
+
+    const btnSpeedDecrementOnClickEvent = () => {
+        // Lower Bound = 0 || Starting point of Array (index=0)
+        if (snakeSpeedPointer !== 0) {
+
+            snakeSpeed = snakeSpeedValues[--snakeSpeedPointer].speedValue;
+            speedDisplayId.innerText = `${snakeSpeedValues[snakeSpeedPointer].userValue}`;
+
+            clearInterval(snakeInterval);
+            snakeInterval = setInterval(snakeIntervalLoop, snakeSpeed)
+        }
+
+    }
+    const btnSpeedIncrementOnClickEvent = () => {
+        // Higher Bound = 9 || snakeSpeedValues.length-1
+        if (snakeSpeedPointer !== snakeSpeedValues.length - 1) {
+            snakeSpeed = snakeSpeedValues[++snakeSpeedPointer].speedValue;
+            speedDisplayId.innerText = `${snakeSpeedValues[snakeSpeedPointer].userValue}`;
+            clearInterval(snakeInterval);
+            snakeInterval = setInterval(snakeIntervalLoop, snakeSpeed)
+        }
+    }
+
+    const btnBoxDecrementOnClickEvent = () => {
+        if (!(isOverRightNow) && (!(snakeStartedToRun))) {
+            if (activeBox !== 0) {
+                box = boxValue[--activeBox];
+                boxDisplayId.innerText = `${box}`;
+                upperBoundX = canvas.width / box;
+                upperBoundY = canvas.height / box;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                initialSnakeDrawing();
+            }
+
+        }
+    }
+
+    const btnBoxIncrementOnClickEvent = () => {
+        if (!(isOverRightNow) && (!(snakeStartedToRun))) {
+            if (activeBox !== 5) {
+                box = boxValue[++activeBox];
+                boxDisplayId.innerText = `${box}`;
+
+                upperBoundX = canvas.width / box;
+                upperBoundY = canvas.height / box;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                initialSnakeDrawing();
+            }
+        }
+    }
+
+    // decreasing snake length
+    const initialSnakeLengthDecrementOnClickEvent = () => {
+        // Lower Snake Size will be 2;
+        if (!(isOverRightNow) && (!(snakeStartedToRun))) {
+
+            if (initialSnakeSizePointer !== 0) {
+
+                initialSnakeSize = initialSnakeLengthValue[--initialSnakeSizePointer];
+                initialSnakeSizeDisplayId.innerText = `${initialSnakeSize}`;
+                initialSnakeDrawing();
+            }
+        }
+    }
+
+    // increasing snake length
+    const initialSnakeLengthIncrementOnClickEvent = () => {
+        // Upper Snake Size will be 30;
+        if (!(isOverRightNow) && (!(snakeStartedToRun))) {
+
+            if (initialSnakeSizePointer !== initialSnakeLengthValue.length - 1) {
+                initialSnakeSize = initialSnakeLengthValue[++initialSnakeSizePointer];
+                initialSnakeSizeDisplayId.innerText = `${initialSnakeSize}`;
+                initialSnakeDrawing();
+            }
+
+        }
+    }
+
+    const mobileTRBLBtnOnclickEvent=(e)=>{
+        switch (e) {
+            case 37:
+                if (!(snakeDirection === 'right'))
+                    snakeDirection = 'left'; break;
+            case 38:
+                if (!(snakeDirection === 'bottom'))
+                    snakeDirection = 'top'; break;
+            case 39:
+                if (!(snakeDirection === 'left'))
+                    snakeDirection = 'right'; break;
+            case 40:
+                if (!(snakeDirection === 'top'))
+                    snakeDirection = 'bottom'; break;
+            default: break;
+        }
+    }
+
+ 
+
+
+
+
+
+
+
+</script>
+
+</html>
